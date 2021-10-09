@@ -1,4 +1,4 @@
-import { GameType } from "../../../common/enums/GameType";
+import { GameType } from "@games-common/src/enums/GameType";
 
 export interface GameConfigMessage {
     gameType: GameType;
