@@ -261,8 +261,7 @@ export class Engine {
     public NextTurn() {
         // Update the player to move.
         this._currentPlayerIndex =
-            (this._players.get(this._currentPlayerIndex).index + 1) %
-            this._config.NPlayers;
+            (this._currentPlayerIndex + 1) % this._config.NPlayers;
     }
 
     public DrawHands(fresh_round = false) {
@@ -405,10 +404,7 @@ export class Engine {
                             }, make a move`,
                             this._players.get(this._currentPlayerIndex).id,
                             possiblePlays.plays,
-                            this.getGameStateForPlayer(
-                                this._players.get(this._currentPlayerIndex)
-                                    .index
-                            )
+                            this.getGameStateForPlayer(this._currentPlayerIndex)
                         );
                     if (response === null) {
                         // Temporary case for disconnects
@@ -589,12 +585,14 @@ export class Engine {
             currentPlayerIndex: this._currentPlayerIndex, // maybe need to go back one player for event notification, depending on call order
             board: this._board,
             packSize: Size(this._pack),
-            players: Array.from(this._players.values()).map((player) => ({
-                index: player.index,
-                score: player.score,
-                hand: player.index === playerIndex ? player.hand : null,
-                handSize: player.hand.length
-            })),
+            players: Array.from(this._players.values())
+                .sort((a, b) => a.index - b.index)
+                .map((player) => ({
+                    index: player.index,
+                    score: player.score,
+                    hand: player.index === playerIndex ? player.hand : null,
+                    handSize: player.hand.length
+                })),
             nPasses: this._nPasses
         };
     }
