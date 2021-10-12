@@ -12,7 +12,7 @@ import { QueryType } from "./enums/QueryType";
 import { Direction } from "./enums/Direction";
 import { PossiblePlaysMessage } from "./interfaces/PossiblePlaysMessage";
 import { MaskedGameState } from "./interfaces/GameState";
-import { GameConfigMessage } from "./interfaces/GameConfigMessage";
+import { GameConfigSettings } from "./interfaces/GameConfigSettings";
 import { PlayerDetails } from "../../interfaces/PlayerDetails";
 import { Domino, DominoTextRep, IsDouble } from "./Domino";
 import { NewRoundMessagePayload } from "./interfaces/NewRoundMessagePayload";
@@ -53,7 +53,7 @@ export class Engine {
     private _local?: boolean;
 
     public constructor(
-        config: GameConfigMessage,
+        config: GameConfigSettings,
         playerDetails: PlayerDetails[],
         emitToPlayer: (
             type: any,

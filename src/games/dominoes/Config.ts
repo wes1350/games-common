@@ -1,4 +1,4 @@
-import { GameConfigMessage } from "./interfaces/GameConfigMessage";
+import { GameConfigSettings } from "./interfaces/GameConfigSettings";
 
 export interface Config {
     nPlayers: number;
@@ -7,7 +7,7 @@ export interface Config {
     check5Doubles: boolean;
 }
 
-export const InitializeConfig = (config?: GameConfigMessage) => ({
+export const InitializeConfig = (config?: GameConfigSettings) => ({
     nPlayers: config?.nPlayers ?? 4,
     handSize: config?.handSize ?? 7,
     winThreshold: config?.winThreshold ?? 150,

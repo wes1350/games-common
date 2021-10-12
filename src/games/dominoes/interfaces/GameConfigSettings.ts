@@ -1,6 +1,6 @@
 import { GameType } from "@games-common/enums/GameType";
 
-export interface GameConfigMessage {
+export interface GameConfigSettings {
     gameType: GameType.DOMINOES;
     nPlayers?: number;
     handSize?: number;
