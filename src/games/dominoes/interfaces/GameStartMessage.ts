@@ -1,4 +1,4 @@
-interface PlayerDescription {
+export interface PlayerDescription {
     seatNumber: number;
     name: string;
     isMe: boolean;

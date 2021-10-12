@@ -1,7 +1,7 @@
-import { GameType } from "@games-common/src/enums/GameType";
+import { GameType } from "@games-common/enums/GameType";
 
 export interface GameConfigMessage {
-    gameType: GameType;
+    gameType: GameType.DOMINOES;
     nPlayers?: number;
     handSize?: number;
     check5Doubles?: boolean;

@@ -6,7 +6,6 @@ import {
     InitializeBoard,
     ScoreBoard
 } from "./Board";
-import { Config } from "./Config";
 import * as _ from "lodash";
 import { GameMessageType } from "./enums/GameMessageType";
 import { QueryType } from "./enums/QueryType";
@@ -29,6 +28,7 @@ import {
     RemoveDominoFromHand
 } from "./Player";
 import { InitializePack, Pack, Pull, Size } from "./Pack";
+import { Config, InitializeConfig } from "./Config";
 
 export class Engine {
     private _config: Config;
@@ -70,14 +70,14 @@ export class Engine {
         ) => Promise<any> = null,
         local?: boolean
     ) {
-        this._config = new Config(config);
+        this._config = InitializeConfig(config);
         this._players = new Map();
         this._board = null;
         this._pack = null;
         const playerOrder = _.shuffle(_.range(playerDetails.length));
         playerDetails.forEach((playerInfo, i) => {
             this._players.set(
-                i,
+                playerOrder[i],
                 InitializePlayer(playerInfo.id, playerOrder[i], playerInfo.name)
             );
         });
@@ -152,8 +152,8 @@ export class Engine {
 
         if (!this.PlayersHaveDominoes()) {
             this._currentPlayerIndex =
-                (this._currentPlayerIndex + this._config.NPlayers - 1) %
-                this._config.NPlayers;
+                (this._currentPlayerIndex + this._config.nPlayers - 1) %
+                this._config.nPlayers;
             const scoreOnDomino = this.GetValueOnDomino(
                 this._currentPlayerIndex
             );
@@ -246,7 +246,7 @@ export class Engine {
                 direction: null
             } as TurnMessagePayload);
         }
-        if (this._nPasses == this._config.NPlayers) {
+        if (this._nPasses == this._config.nPlayers) {
             return true;
         }
 
@@ -261,22 +261,22 @@ export class Engine {
     public NextTurn() {
         // Update the player to move.
         this._currentPlayerIndex =
-            (this._currentPlayerIndex + 1) % this._config.NPlayers;
+            (this._currentPlayerIndex + 1) % this._config.nPlayers;
     }
 
     public DrawHands(fresh_round = false) {
         while (true) {
             this._pack = InitializePack();
             const hands = [];
-            for (let i = 0; i < this._config.NPlayers; i++) {
-                const pullResult = Pull(this._pack, this._config.HandSize);
+            for (let i = 0; i < this._config.nPlayers; i++) {
+                const pullResult = Pull(this._pack, this._config.handSize);
                 this._pack = pullResult.pack;
                 hands.push(pullResult.pulled);
             }
             if (
-                this.VerifyHands(hands, fresh_round, this._config.Check5Doubles)
+                this.VerifyHands(hands, fresh_round, this._config.check5Doubles)
             ) {
-                for (let i = 0; i < this._config.NPlayers; i++) {
+                for (let i = 0; i < this._config.nPlayers; i++) {
                     this._players.set(i, {
                         ...this._players.get(i),
                         hand: hands[i]
@@ -328,7 +328,7 @@ export class Engine {
         // Determine who has the largest double, and thus who will play first.
         // Assumes each player's hand is assigned and a double exists among them.
         for (let i = 6; i >= 0; i--) {
-            for (let p = 0; p < this._config.NPlayers; p++) {
+            for (let p = 0; p < this._config.nPlayers; p++) {
                 for (const domino of this._players.get(p).hand) {
                     if (domino.head === i && domino.tail === i) {
                         return p;
@@ -348,7 +348,7 @@ export class Engine {
     }
 
     public GameIsOver() {
-        return Math.max(...this.GetScores()) >= this._config.WinThreshold;
+        return Math.max(...this.GetScores()) >= this._config.winThreshold;
     }
 
     public GetScores(): number[] {
@@ -580,7 +580,7 @@ export class Engine {
 
     private getGameStateForPlayer(playerIndex: number): MaskedGameState {
         return {
-            config: this._config.ConfigDescription,
+            config: this._config,
             myIndex: playerIndex,
             currentPlayerIndex: this._currentPlayerIndex, // maybe need to go back one player for event notification, depending on call order
             board: this._board,
