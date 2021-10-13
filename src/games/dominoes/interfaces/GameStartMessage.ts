@@ -1,3 +1,5 @@
+import { GameConfigDescription } from "@games-common/interfaces/GameConfigDescription";
+
 export interface PlayerDescription {
     seatNumber: number;
     name: string;
@@ -6,7 +8,5 @@ export interface PlayerDescription {
 
 export interface GameStartMessage {
     players: PlayerDescription[];
-    config: {
-        n_dominoes: number;
-    };
+    config: GameConfigDescription;
 }
