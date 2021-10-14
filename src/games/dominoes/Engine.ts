@@ -528,56 +528,6 @@ export class Engine {
         }
     }
 
-    // public GetPlacementRep(domino: Domino, addedDirection: Direction) {
-    //     // After adding a domino to the board, return how it will look in its rendered form
-    //     let dominoOrientationDirection: Direction;
-    //     if (
-    //         addedDirection === Direction.NONE ||
-    //         addedDirection === Direction.EAST ||
-    //         addedDirection === Direction.WEST
-    //     ) {
-    //         if (domino.IsDouble) {
-    //             dominoOrientationDirection = Direction.SOUTH;
-    //         } else {
-    //             dominoOrientationDirection = domino.IsReversed
-    //                 ? Direction.WEST
-    //                 : Direction.EAST;
-    //         }
-    //     } else if (
-    //         addedDirection === Direction.NORTH ||
-    //         addedDirection === Direction.SOUTH
-    //     ) {
-    //         if (domino.IsDouble) {
-    //             dominoOrientationDirection = Direction.EAST;
-    //         } else {
-    //             dominoOrientationDirection = domino.IsReversed
-    //                 ? Direction.NORTH
-    //                 : Direction.SOUTH;
-    //         }
-    //     }
-
-    //     const dominoCoordinates =
-    //         addedDirection === Direction.NONE
-    //             ? { x: 0, y: 0 }
-    //             : addedDirection === Direction.NORTH
-    //             ? this._board.NorthEdge
-    //             : addedDirection === Direction.EAST
-    //             ? this._board.EastEdge
-    //             : addedDirection === Direction.SOUTH
-    //             ? this._board.SouthEdge
-    //             : addedDirection === Direction.WEST
-    //             ? this._board.WestEdge
-    //             : null;
-
-    //     return {
-    //         face1: domino.Head,
-    //         face2: domino.Tail,
-    //         direction: dominoOrientationDirection,
-    //         x: dominoCoordinates.x,
-    //         y: dominoCoordinates.y
-    //     };
-    // }
-
     private getGameStateForPlayer(playerIndex: number): MaskedGameState {
         return {
             config: this._config,
