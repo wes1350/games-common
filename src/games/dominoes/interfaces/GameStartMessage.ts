@@ -1,4 +1,4 @@
-import { GameConfigDescription } from "@games-common/interfaces/GameConfigDescription";
+import { Config } from "../Config";
 
 export interface PlayerDescription {
     seatNumber: number;
@@ -8,5 +8,5 @@ export interface PlayerDescription {
 
 export interface GameStartMessage {
     players: PlayerDescription[];
-    config: GameConfigDescription;
+    config: Config;
 }

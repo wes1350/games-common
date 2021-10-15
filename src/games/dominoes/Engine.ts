@@ -12,7 +12,6 @@ import { QueryType } from "./enums/QueryType";
 import { Direction } from "./enums/Direction";
 import { PossiblePlaysMessage } from "./interfaces/PossiblePlaysMessage";
 import { MaskedGameState } from "./interfaces/GameState";
-import { GameConfigSettings } from "./interfaces/GameConfigSettings";
 import { PlayerDetails } from "../../interfaces/PlayerDetails";
 import { Domino, DominoTextRep, IsDouble } from "./Domino";
 import { NewRoundMessagePayload } from "./interfaces/NewRoundMessagePayload";
@@ -28,10 +27,10 @@ import {
     RemoveDominoFromHand
 } from "./Player";
 import { InitializePack, Pack, Pull, Size } from "./Pack";
-import { Config, InitializeConfig } from "./Config";
+import { Config as DominoesConfig, InitializeConfig } from "./Config";
 
 export class Engine {
-    private _config: Config;
+    private _config: DominoesConfig;
     private _players: Map<number, Player>;
     private _board: Board;
     private _pack: Pack;
@@ -53,7 +52,7 @@ export class Engine {
     private _local?: boolean;
 
     public constructor(
-        config: GameConfigSettings,
+        config: DominoesConfig,
         playerDetails: PlayerDetails[],
         emitToPlayer: (
             type: any,
@@ -538,7 +537,9 @@ export class Engine {
             players: Array.from(this._players.values())
                 .sort((a, b) => a.index - b.index)
                 .map((player) => ({
+                    id: player.id,
                     index: player.index,
+                    name: player.name,
                     score: player.score,
                     hand: player.index === playerIndex ? player.hand : null,
                     handSize: player.hand.length

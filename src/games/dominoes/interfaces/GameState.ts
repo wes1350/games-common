@@ -1,11 +1,10 @@
-import { GameConfigDescription } from "@games-common/interfaces/GameConfigDescription";
 import { Board } from "../Board";
-import { Domino } from "../Domino";
+import { Config } from "../Config";
 import { Pack } from "../Pack";
 import { Player } from "../Player";
 
 export interface GameState {
-    config: GameConfigDescription;
+    config: Config;
     currentPlayerIndex: number;
     players: Player[];
     pack: Pack;
@@ -14,7 +13,7 @@ export interface GameState {
 }
 
 export interface MaskedGameState {
-    config: GameConfigDescription;
+    config: Config;
     myIndex: number;
     currentPlayerIndex: number;
     players: Player[];
