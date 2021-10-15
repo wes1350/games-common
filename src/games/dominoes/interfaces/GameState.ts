@@ -2,24 +2,12 @@ import { GameConfigDescription } from "@games-common/interfaces/GameConfigDescri
 import { Board } from "../Board";
 import { Domino } from "../Domino";
 import { Pack } from "../Pack";
-
-export interface GameStatePlayer {
-    index: number;
-    score: number;
-    hand: Domino[];
-}
-
-export interface MaskedGameStatePlayer {
-    index: number;
-    score: number;
-    hand: Domino[] | null;
-    handSize: number;
-}
+import { Player } from "../Player";
 
 export interface GameState {
     config: GameConfigDescription;
     currentPlayerIndex: number;
-    players: GameStatePlayer[];
+    players: Player[];
     pack: Pack;
     board: Board;
     nPasses: number;
@@ -29,7 +17,7 @@ export interface MaskedGameState {
     config: GameConfigDescription;
     myIndex: number;
     currentPlayerIndex: number;
-    players: MaskedGameStatePlayer[];
+    players: Player[];
     packSize: number;
     board: Board;
     nPasses: number;
