@@ -390,11 +390,11 @@ export class Engine {
             );
             if (move_possible) {
                 try {
-                    this._emitToPlayer(
-                        GameMessageType.POSSIBLE_PLAYS,
-                        possiblePlays,
-                        this._players.get(this._currentPlayerIndex).id
-                    );
+                    // this._emitToPlayer(
+                    //     GameMessageType.POSSIBLE_PLAYS,
+                    //     possiblePlays,
+                    //     this._players.get(this._currentPlayerIndex).id
+                    // );
                     const response: { domino: number; direction: string } =
                         await this._queryPlayer(
                             QueryType.MOVE,

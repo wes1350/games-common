@@ -2,7 +2,7 @@ export enum GameMessageType {
     GAME_START = "GAME_START",
     GAME_OVER = "GAME_OVER",
     ADD_DOMINO = "ADD_DOMINO",
-    POSSIBLE_PLAYS = "POSSIBLE_PLAYS",
+    // POSSIBLE_PLAYS = "POSSIBLE_PLAYS",
     HAND = "HAND",
     PACK_EMPTY = "PACK_EMPTY",
     SCORE = "SCORE",
