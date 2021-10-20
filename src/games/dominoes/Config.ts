@@ -1,5 +1,5 @@
-import { GameType } from "@games-common/enums/GameType";
-import { GameConfig } from "@games-common/interfaces/GameConfig";
+import { GameType } from "../../enums/GameType";
+import { GameConfig } from "../../interfaces/GameConfig";
 
 export interface Config extends GameConfig {
     gameType: GameType.DOMINOES;
