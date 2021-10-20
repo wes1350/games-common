@@ -9,7 +9,7 @@ export interface Config extends GameConfig {
     check5Doubles: boolean;
 }
 
-export const InitializeConfig = (config?: any) => ({
+export const InitializeConfig = (config?: Partial<Config>) => ({
     gameType: GameType.DOMINOES,
     nPlayers: config?.nPlayers ?? 4,
     handSize: config?.handSize ?? 7,

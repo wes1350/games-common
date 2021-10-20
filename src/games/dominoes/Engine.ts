@@ -52,7 +52,7 @@ export class Engine {
     private _local?: boolean;
 
     public constructor(
-        config: DominoesConfig,
+        config: Partial<DominoesConfig>,
         playerDetails: PlayerDetails[],
         emitToPlayer: (
             type: any,
