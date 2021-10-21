@@ -28,6 +28,8 @@ import {
 } from "./Player";
 import { InitializePack, Pack, Pull, Size } from "./Pack";
 import { Config as DominoesConfig, InitializeConfig } from "./Config";
+import { GameType } from "../../enums/GameType";
+import { GameStartMessage } from "./interfaces/GameStartMessage";
 
 export class Engine {
     private _config: DominoesConfig;
@@ -90,22 +92,16 @@ export class Engine {
         this._local = local;
     }
 
-    private getInitialPlayerRepresentationsForPlayer(
-        playerId: string
-    ): { seatNumber: number; name: string; isMe: boolean }[] {
-        return Array.from(this._players.values()).map((player) => ({
-            seatNumber: player.index,
-            name: player.name,
-            isMe: player.id === playerId
-        }));
-    }
-
     public async RunGame(): Promise<string> {
         // Start and run a game until completion, handling game logic as necessary.
         this._players.forEach((player: Player) => {
             this._emitToPlayer(
                 GameMessageType.GAME_START,
-                this.getInitialPlayerRepresentationsForPlayer(player.id),
+                // this.getInitialPlayerRepresentationsForPlayer(player.id),
+                {
+                    gameType: GameType.DOMINOES,
+                    gameState: this.getGameStateForPlayer(player.index)
+                } as GameStartMessage,
                 player.id
             );
         });

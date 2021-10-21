@@ -1,12 +1,7 @@
-import { Config } from "../Config";
-
-export interface PlayerDescription {
-    seatNumber: number;
-    name: string;
-    isMe: boolean;
-}
+import { GameType } from "../../../enums/GameType";
+import { MaskedGameState } from "./GameState";
 
 export interface GameStartMessage {
-    players: PlayerDescription[];
-    config: Config;
+    gameType: GameType.DOMINOES;
+    gameState: MaskedGameState;
 }
