@@ -97,28 +97,11 @@ export class Engine {
     }
 
     public async RunGame(): Promise<string> {
-        // Start and run a game until completion, handling game logic as necessary.
-        // this.InitializeRound();
-
-        // this._players.forEach((player: Player) => {
-        //     this._emitToPlayer(
-        //         GameMessageType.GAME_START,
-        //         // this.getInitialPlayerRepresentationsForPlayer(player.id),
-        //         {
-        //             gameType: GameType.DOMINOES
-        //             // gameState: this.getGameStateForPlayer(player.index)
-        //         } as GameStartMessagePayload,
-        //         player.id
-        //     );
-        // });
         this._broadcast(GameMessageType.GAME_START, {
             gameType: GameType.DOMINOES
         });
 
-        // this.PlayRound();
-
         while (!this.GameIsOver()) {
-            // this.InitializeRound();
             await this.PlayRound();
         }
 
@@ -130,32 +113,7 @@ export class Engine {
         return this._players.get(winner).id;
     }
 
-    // public InitializeRound() {
-    //     this._board = InitializeBoard();
-    //     this.DrawHands();
-
-    //     if (this._fresh) {
-    //         this._currentPlayerIndex = this.DetermineFirstPlayer();
-    //     }
-
-    //     // Array.from(this._players.values()).forEach((player) => {
-    //     //     this._emitToPlayer(
-    //     //         GameMessageType.HAND,
-    //     //         {
-    //     //             hand: player.hand,
-    //     //             gameState: this.getGameStateForPlayer(player.index)
-    //     //         } as HandMessagePayload,
-    //     //         player.id
-    //     //     );
-    //     // });
-    // }
-
     public async PlayRound() {
-        // if (this._fresh) {
-        //     this._currentPlayerIndex = this.DetermineFirstPlayer();
-        // }
-        // this.InitializeRound();
-
         this._board = InitializeBoard();
         this.DrawHands();
         if (this._fresh) {
@@ -171,14 +129,9 @@ export class Engine {
                 player.id
             );
         });
-        // this._broadcast(GameMessageType.NEW_ROUND, {
-        //     currentPlayerIndex: this._currentPlayerIndex
-        // } as NewRoundMessagePayload);
         let blocked = false;
         while (this.PlayersHaveDominoes() && !blocked && !this.GameIsOver()) {
             blocked = await this.PlayTurn();
-            this.NextTurn();
-            this._fresh = false;
         }
         if (blocked === null) {
             // Temporary case for disconnects
@@ -270,8 +223,7 @@ export class Engine {
         const direction = move.direction;
         if (domino !== null) {
             this._board = AddDominoToBoard(this._board, domino, direction);
-            // const addedCoordinate = this._board.AddDomino(domino, direction);
-            // const placementRep = this.GetPlacementRep(domino, direction);
+
             this._players.set(
                 this._currentPlayerIndex,
                 RemoveDominoFromHand(
@@ -279,23 +231,6 @@ export class Engine {
                     domino
                 )
             );
-            Array.from(this._players.values()).forEach((player) => {
-                this._emitToPlayer(
-                    GameMessageType.TURN,
-                    {
-                        gameState: this.getGameStateForPlayer(player.index),
-                        index: this._currentPlayerIndex,
-                        domino,
-                        direction
-                    } as TurnMessagePayload,
-                    player.id
-                );
-            });
-            // this._broadcast(GameMessageType.TURN, {
-            //     seat: this._currentPlayerIndex,
-            //     domino,
-            //     direction
-            // } as TurnMessagePayload);
 
             this._emitToPlayer(
                 GameMessageType.HAND,
@@ -309,7 +244,6 @@ export class Engine {
             );
 
             const score = ScoreBoard(this._board);
-
             if (score) {
                 Array.from(this._players.values()).forEach((player) => {
                     this._emitToPlayer(
@@ -322,10 +256,6 @@ export class Engine {
                         player.id
                     );
                 });
-                // this._broadcast(GameMessageType.SCORE, {
-                //     seat: this._currentPlayerIndex,
-                //     score
-                // } as ScoreMessagePayload);
             }
 
             this._players.set(
@@ -336,25 +266,8 @@ export class Engine {
         } else {
             // Player passes
             this._nPasses += 1;
-
-            Array.from(this._players.values()).forEach((player) => {
-                this._emitToPlayer(
-                    GameMessageType.TURN,
-                    {
-                        gameState: this.getGameStateForPlayer(player.index),
-                        index: this._currentPlayerIndex,
-                        domino,
-                        direction
-                    } as TurnMessagePayload,
-                    player.id
-                );
-            });
-            // this._broadcast(GameMessageType.TURN, {
-            //     seat: this._currentPlayerIndex,
-            //     domino: null,
-            //     direction: null
-            // } as TurnMessagePayload);
         }
+
         if (this._nPasses == this._config.nPlayers) {
             return true;
         }
@@ -364,13 +277,26 @@ export class Engine {
             console.log("scores:", this.GetScores(), "\n");
         }
 
-        return false;
-    }
+        const turnPlayerIndex = this._currentPlayerIndex;
 
-    public NextTurn() {
-        // Update the player to move.
         this._currentPlayerIndex =
             (this._currentPlayerIndex + 1) % this._config.nPlayers;
+        this._fresh = false;
+
+        Array.from(this._players.values()).forEach((player) => {
+            this._emitToPlayer(
+                GameMessageType.TURN,
+                {
+                    gameState: this.getGameStateForPlayer(player.index),
+                    index: turnPlayerIndex,
+                    domino,
+                    direction
+                } as TurnMessagePayload,
+                player.id
+            );
+        });
+
+        return false;
     }
 
     public DrawHands() {
