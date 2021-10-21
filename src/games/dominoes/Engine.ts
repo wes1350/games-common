@@ -111,7 +111,9 @@ export class Engine {
         //         player.id
         //     );
         // });
-        this._broadcast(GameMessageType.GAME_START);
+        this._broadcast(GameMessageType.GAME_START, {
+            gameType: GameType.DOMINOES
+        });
 
         // this.PlayRound();
 
