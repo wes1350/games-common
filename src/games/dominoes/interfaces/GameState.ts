@@ -10,6 +10,7 @@ export interface GameState {
     pack: Pack;
     board: Board;
     nPasses: number;
+    fresh: boolean;
 }
 
 export interface MaskedGameState {
@@ -20,4 +21,5 @@ export interface MaskedGameState {
     packSize: number;
     board: Board;
     nPasses: number;
+    fresh: boolean;
 }
