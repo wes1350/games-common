@@ -4,7 +4,15 @@ export class Player {
     id: string;
     index: number;
     name: string;
-    hand: Domino[];
+    hand: NonNullable<Domino[]>;
+    score: number;
+}
+
+export class Opponent {
+    id: string;
+    index: number;
+    name: string;
+    handSize: number;
     score: number;
 }
 

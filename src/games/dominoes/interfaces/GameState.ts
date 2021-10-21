@@ -1,7 +1,7 @@
 import { Board } from "../Board";
 import { Config } from "../Config";
 import { Pack } from "../Pack";
-import { Player } from "../Player";
+import { Opponent, Player } from "../Player";
 
 export interface GameState {
     config: Config;
@@ -14,9 +14,9 @@ export interface GameState {
 
 export interface MaskedGameState {
     config: Config;
-    myIndex: number;
     currentPlayerIndex: number;
-    players: Player[];
+    me: Player;
+    opponents: Opponent[];
     packSize: number;
     board: Board;
     nPasses: number;

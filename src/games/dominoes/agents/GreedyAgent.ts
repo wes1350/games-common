@@ -24,7 +24,7 @@ const GreedyAgent: Agent = {
             ScoreBoard(
                 AddDominoToBoard(
                     gameState.board,
-                    gameState.players[gameState.myIndex].hand[option.domino],
+                    gameState.me.hand[option.domino],
                     option.direction
                 )
             )
@@ -35,9 +35,7 @@ const GreedyAgent: Agent = {
             )} with a score of ${ScoreBoard(
                 AddDominoToBoard(
                     gameState.board,
-                    gameState.players[gameState.myIndex].hand[
-                        bestOption.domino
-                    ],
+                    gameState.me.hand[bestOption.domino],
                     bestOption.direction
                 )
             )}`

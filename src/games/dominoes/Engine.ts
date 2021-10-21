@@ -94,6 +94,8 @@ export class Engine {
 
     public async RunGame(): Promise<string> {
         // Start and run a game until completion, handling game logic as necessary.
+        this.InitializeRound(true);
+
         this._players.forEach((player: Player) => {
             this._emitToPlayer(
                 GameMessageType.GAME_START,
@@ -105,7 +107,6 @@ export class Engine {
                 player.id
             );
         });
-        this.InitializeRound(true);
 
         let next_round_fresh = await this.PlayRound(true);
         while (!this.GameIsOver()) {
@@ -526,18 +527,20 @@ export class Engine {
     private getGameStateForPlayer(playerIndex: number): MaskedGameState {
         return {
             config: this._config,
-            myIndex: playerIndex,
             currentPlayerIndex: this._currentPlayerIndex, // maybe need to go back one player for event notification, depending on call order
             board: this._board,
             packSize: Size(this._pack),
-            players: Array.from(this._players.values())
+            me: Array.from(this._players.values()).find(
+                (player) => player.index === playerIndex
+            ),
+            opponents: Array.from(this._players.values())
+                .filter((player) => player.index !== playerIndex)
                 .sort((a, b) => a.index - b.index)
                 .map((player) => ({
                     id: player.id,
                     index: player.index,
                     name: player.name,
                     score: player.score,
-                    hand: player.index === playerIndex ? player.hand : null,
                     handSize: player.hand.length
                 })),
             nPasses: this._nPasses
