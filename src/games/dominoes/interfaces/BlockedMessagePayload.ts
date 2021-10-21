@@ -1,6 +1,5 @@
 import { MaskedGameState } from "./GameState";
 
-export interface PullMessagePayload {
-    playerIndex: number;
+export interface BlockedMessagePayload {
     gameState: MaskedGameState;
 }

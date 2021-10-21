@@ -29,7 +29,9 @@ import {
 import { InitializePack, Pack, Pull, Size } from "./Pack";
 import { Config as DominoesConfig, InitializeConfig } from "./Config";
 import { GameType } from "../../enums/GameType";
-import { GameStartMessage } from "./interfaces/GameStartMessage";
+import { GameStartMessagePayload } from "./interfaces/GameStartMessagePayload";
+import { HandMessagePayload } from "./interfaces/HandMessagePayload";
+import { BlockedMessagePayload } from "./interfaces/BlockedMessagePayload";
 
 export class Engine {
     private _config: DominoesConfig;
@@ -103,7 +105,7 @@ export class Engine {
                 {
                     gameType: GameType.DOMINOES,
                     gameState: this.getGameStateForPlayer(player.index)
-                } as GameStartMessage,
+                } as GameStartMessagePayload,
                 player.id
             );
         });
@@ -131,9 +133,18 @@ export class Engine {
         if (fresh_round) {
             this._currentPlayerIndex = this.DetermineFirstPlayer();
         }
-        this._broadcast(GameMessageType.NEW_ROUND, {
-            currentPlayer: this._currentPlayerIndex
-        } as NewRoundMessagePayload);
+        Array.from(this._players.values()).forEach((player) => {
+            this._emitToPlayer(
+                GameMessageType.NEW_ROUND,
+                {
+                    gameState: this.getGameStateForPlayer(player.index)
+                } as NewRoundMessagePayload,
+                player.id
+            );
+        });
+        // this._broadcast(GameMessageType.NEW_ROUND, {
+        //     currentPlayerIndex: this._currentPlayerIndex
+        // } as NewRoundMessagePayload);
         let blocked = false;
         let play_fresh = fresh_round;
         while (this.PlayersHaveDominoes() && !blocked && !this.GameIsOver()) {
@@ -161,24 +172,60 @@ export class Engine {
                     scoreOnDomino
                 )
             );
-            this._broadcast(GameMessageType.SCORE, {
-                seat: this._currentPlayerIndex,
-                score: scoreOnDomino
-            } as ScoreMessagePayload);
+            Array.from(this._players.values()).forEach((player) => {
+                this._emitToPlayer(
+                    GameMessageType.SCORE,
+                    {
+                        gameState: this.getGameStateForPlayer(player.index),
+                        index: this._currentPlayerIndex,
+                        score: scoreOnDomino
+                    } as ScoreMessagePayload,
+                    player.id
+                );
+            });
+            // this._broadcast(GameMessageType.SCORE, {
+            //     gameState: this.getGameStateForPlayer(this._currentPlayerIndex),
+            //     index: this._currentPlayerIndex,
+            //     score: scoreOnDomino
+            // } as ScoreMessagePayload);
             this._broadcast(GameMessageType.PLAYER_DOMINOED);
             return false;
         } else if (blocked) {
-            this._broadcast(GameMessageType.GAME_BLOCKED);
+            // this._broadcast(GameMessageType.GAME_BLOCKED);
+            Array.from(this._players.values()).forEach((player) => {
+                this._emitToPlayer(
+                    GameMessageType.GAME_BLOCKED,
+                    {
+                        gameState: this.getGameStateForPlayer(player.index)
+                    } as BlockedMessagePayload,
+                    player.id
+                );
+            });
             const blockedResult = this.GetBlockedResult();
-            const player = blockedResult.player;
+            const scoringPlayer = blockedResult.player;
             const total = blockedResult.total;
 
-            if (player !== null) {
-                this._broadcast(GameMessageType.SCORE, {
-                    seat: player.index,
-                    score: total
-                } as ScoreMessagePayload);
-                this._players.set(player.index, AddPoints(player, total));
+            if (scoringPlayer !== null) {
+                Array.from(this._players.values()).forEach((player) => {
+                    this._emitToPlayer(
+                        GameMessageType.SCORE,
+                        {
+                            gameState: this.getGameStateForPlayer(player.index),
+                            index: scoringPlayer.index,
+                            score: total
+                        } as ScoreMessagePayload,
+                        player.id
+                    );
+                });
+                // this._broadcast(GameMessageType.SCORE, {
+                //     gameState: this.getGameStateForPlayer(player.index),
+                //     index: player.index,
+                //     score: total
+                // } as ScoreMessagePayload);
+                this._players.set(
+                    scoringPlayer.index,
+                    AddPoints(scoringPlayer, total)
+                );
             }
             return true;
         } else {
@@ -206,25 +253,53 @@ export class Engine {
                     domino
                 )
             );
-            this._broadcast(GameMessageType.TURN, {
-                seat: this._currentPlayerIndex,
-                domino,
-                direction
-            } as TurnMessagePayload);
+            Array.from(this._players.values()).forEach((player) => {
+                this._emitToPlayer(
+                    GameMessageType.TURN,
+                    {
+                        gameState: this.getGameStateForPlayer(player.index),
+                        index: this._currentPlayerIndex,
+                        domino,
+                        direction
+                    } as TurnMessagePayload,
+                    player.id
+                );
+            });
+            // this._broadcast(GameMessageType.TURN, {
+            //     seat: this._currentPlayerIndex,
+            //     domino,
+            //     direction
+            // } as TurnMessagePayload);
 
             this._emitToPlayer(
                 GameMessageType.HAND,
-                this._players.get(this._currentPlayerIndex).hand,
+                {
+                    hand: this._players.get(this._currentPlayerIndex).hand,
+                    gameState: this.getGameStateForPlayer(
+                        this._currentPlayerIndex
+                    )
+                } as HandMessagePayload,
                 this._players.get(this._currentPlayerIndex).id
             );
 
             const score = ScoreBoard(this._board);
 
             if (score) {
-                this._broadcast(GameMessageType.SCORE, {
-                    seat: this._currentPlayerIndex,
-                    score
-                } as ScoreMessagePayload);
+                Array.from(this._players.values()).forEach((player) => {
+                    this._emitToPlayer(
+                        GameMessageType.SCORE,
+                        {
+                            gameState: this.getGameStateForPlayer(player.index),
+                            index: this._currentPlayerIndex,
+                            score: score
+                        } as ScoreMessagePayload,
+                        player.id
+                    );
+                });
+                // this._broadcast(GameMessageType.SCORE, {
+                //     seat: this._currentPlayerIndex,
+                //     score
+                // } as ScoreMessagePayload);
             }
 
             this._players.set(
@@ -236,11 +311,23 @@ export class Engine {
             // Player passes
             this._nPasses += 1;
 
-            this._broadcast(GameMessageType.TURN, {
-                seat: this._currentPlayerIndex,
-                domino: null,
-                direction: null
-            } as TurnMessagePayload);
+            Array.from(this._players.values()).forEach((player) => {
+                this._emitToPlayer(
+                    GameMessageType.TURN,
+                    {
+                        gameState: this.getGameStateForPlayer(player.index),
+                        index: this._currentPlayerIndex,
+                        domino,
+                        direction
+                    } as TurnMessagePayload,
+                    player.id
+                );
+            });
+            // this._broadcast(GameMessageType.TURN, {
+            //     seat: this._currentPlayerIndex,
+            //     domino: null,
+            //     direction: null
+            // } as TurnMessagePayload);
         }
         if (this._nPasses == this._config.nPlayers) {
             return true;
@@ -279,7 +366,10 @@ export class Engine {
                     });
                     this._emitToPlayer(
                         GameMessageType.HAND,
-                        this._players.get(i).hand,
+                        {
+                            hand: this._players.get(i).hand,
+                            gameState: this.getGameStateForPlayer(i)
+                        } as HandMessagePayload,
                         this._players.get(i).id
                     );
                 }
@@ -462,9 +552,24 @@ export class Engine {
                 const pulled = pullResult.pulled;
 
                 if (pulled.length > 0) {
-                    this._broadcast(GameMessageType.PULL, {
-                        seat: this._currentPlayerIndex
-                    } as PullMessagePayload);
+                    Array.from(this._players.values()).forEach((player) => {
+                        this._emitToPlayer(
+                            GameMessageType.PULL,
+                            {
+                                playerIndex: this._currentPlayerIndex,
+                                gameState: this.getGameStateForPlayer(
+                                    player.index
+                                )
+                            } as PullMessagePayload,
+                            player.id
+                        );
+                    });
+                    // this._broadcast(GameMessageType.PULL, {
+                    //     playerIndex: this._currentPlayerIndex,
+                    //     gameState: this.getGameStateForPlayer(
+                    //         this._currentPlayerIndex
+                    //     )
+                    // } as PullMessagePayload);
                     this._players.set(
                         this._currentPlayerIndex,
                         AddDominoToHand(
@@ -474,7 +579,14 @@ export class Engine {
                     );
                     this._emitToPlayer(
                         GameMessageType.HAND,
-                        this._players.get(this._currentPlayerIndex).hand,
+                        {
+                            hand: this._players.get(this._currentPlayerIndex)
+                                .hand,
+                            gameState: this.getGameStateForPlayer(
+                                this._currentPlayerIndex
+                            )
+                        } as HandMessagePayload,
+                        // this._players.get(this._currentPlayerIndex).hand,
                         this._players.get(this._currentPlayerIndex).id
                     );
                 } else {

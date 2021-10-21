@@ -1,4 +1,7 @@
+import { MaskedGameState } from "./GameState";
+
 export interface ScoreMessagePayload {
-    seat: number;
+    gameState: MaskedGameState;
+    index: number;
     score: number;
 }

@@ -1,3 +1,5 @@
+import { MaskedGameState } from "./GameState";
+
 export interface NewRoundMessagePayload {
-    currentPlayer: number;
+    gameState: MaskedGameState;
 }
