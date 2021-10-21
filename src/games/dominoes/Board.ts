@@ -256,7 +256,7 @@ export const GetValidPlacements = (
 export const GetValidPlacementsForHand = (
     board: Board,
     hand: Domino[],
-    playFresh = false
+    playFresh: boolean
 ): { index: number; domino: Domino; dirs: Direction[] }[] => {
     const placements: {
         index: number;
