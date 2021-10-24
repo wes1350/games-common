@@ -96,7 +96,7 @@ export class Engine {
         this._local = local;
     }
 
-    public async RunGame(): Promise<string> {
+    public async RunGame(): Promise<void> {
         this._broadcast(GameMessageType.GAME_START, {
             gameType: GameType.DOMINOES
         });
@@ -105,12 +105,13 @@ export class Engine {
             await this.PlayRound();
         }
 
-        const scores = this.GetScores();
+        const players = Array.from(this._players.values());
+        const maxScore = Math.max(...players.map((player) => player.score));
+        const winnerId = players.find((player) => player.score === maxScore).id;
 
-        const winner = scores.findIndex(
-            (score: number) => score === Math.max(...scores)
-        );
-        return this._players.get(winner).id;
+        this._broadcast(GameMessageType.GAME_OVER, {
+            winnerId: winnerId
+        });
     }
 
     public async PlayRound() {
