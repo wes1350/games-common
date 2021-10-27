@@ -12,7 +12,6 @@ import { QueryType } from "./enums/QueryType";
 import { Direction } from "./enums/Direction";
 import { PossiblePlaysMessage } from "./interfaces/PossiblePlaysMessage";
 import { MaskedGameState } from "./interfaces/GameState";
-import { PlayerDetails } from "../../interfaces/PlayerDetails";
 import { Domino, DominoTextRep, IsDouble } from "./Domino";
 import { NewRoundMessagePayload } from "./interfaces/NewRoundMessagePayload";
 import { ScoreMessagePayload } from "./interfaces/ScoreMessagePayload";
@@ -29,9 +28,9 @@ import {
 import { InitializePack, Pack, Pull, Size } from "./Pack";
 import { Config as DominoesConfig, InitializeConfig } from "./Config";
 import { GameType } from "../../enums/GameType";
-import { GameStartMessagePayload } from "./interfaces/GameStartMessagePayload";
 import { HandMessagePayload } from "./interfaces/HandMessagePayload";
 import { BlockedMessagePayload } from "./interfaces/BlockedMessagePayload";
+import { PlayerDetails } from "@games-common/interfaces/PlayerDetails";
 
 export class Engine {
     private _config: DominoesConfig;

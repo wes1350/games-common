@@ -1,4 +1,6 @@
+import { PlayerDetails } from "./PlayerDetails";
+
 export interface RoomDetails {
     private: boolean;
-    players: { id: string; name: string }[];
+    players: PlayerDetails[];
 }
