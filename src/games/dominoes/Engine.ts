@@ -30,7 +30,8 @@ import { Config as DominoesConfig, InitializeConfig } from "./Config";
 import { GameType } from "../../enums/GameType";
 import { HandMessagePayload } from "./interfaces/HandMessagePayload";
 import { BlockedMessagePayload } from "./interfaces/BlockedMessagePayload";
-import { PlayerDetails } from "@games-common/interfaces/PlayerDetails";
+// TODO: unify imports between frontend and backend with @... syntax
+// import { PlayerDetails } from "@games-common/interfaces/PlayerDetails";
 
 export class Engine {
     private _config: DominoesConfig;
@@ -57,7 +58,7 @@ export class Engine {
 
     public constructor(
         config: Partial<DominoesConfig>,
-        playerDetails: PlayerDetails[],
+        playerDetails: { id: string; name: string }[],
         emitToPlayer: (
             type: any,
             payload: any,
