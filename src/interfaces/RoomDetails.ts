@@ -1,7 +1,7 @@
-import { PlayerDetails } from "./PlayerDetails";
+import { LobbyMemberDetails } from "./LobbyMemberDetails";
 
 export interface RoomDetails {
     private: boolean;
-    players: PlayerDetails[];
+    players: LobbyMemberDetails[];
     owner: string;
 }
